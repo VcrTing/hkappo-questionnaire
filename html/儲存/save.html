@@ -1,0 +1,44 @@
+<!--
+        <div id="id-q-email-content">
+            <div style="width: 100%; background: #dbe6f4; min-height: 300px; padding: 24px;">
+                <div><br/><br/></div>
+                <h2 style="text-align: center; font-size: 28px; margin: 0px auto;">{{(this.member.name.length > 1) ? this.member.name : '用戶'}}的OSDI眼球表面病變指數分數是</h2>
+                <div><br/><br/></div>
+                <div style="text-align: center; border-radius: 12px; background-color: rgb(252, 253, 254); width: 100%; padding: 30px 24px; max-width: calc(400px + 10vw); margin: 0 auto;">
+                    <div class="pb"><h1 style="font-size: 48px; margin: 0 auto;">{{this.osdi}}</h1></div>
+                    <h3 style="font-size: 26px; margin: 0 auto;">情況屬於<span :style="{ 'color': (this.osdi < this.LIGHT_LIMIT ? 'rgb(25, 161, 63)' : 'rgb(241, 44, 103)') }">【{{this.osdiTxt}}】</span></h3>
+                </div>
+                <div><br/><br/></div>
+                <div style="border-radius: 12px; width: 100%; padding: 24px 48px; max-width: calc(400px + 10vw); margin: 0 auto;">
+                    <h3 style="font-size: 24px;">用戶信息</h3>
+                    <p>姓名：{{this.member.name}}</p>
+                    <p>年齡：{{this.member.age}}</p>
+                    <p>性別：{{this.GENDER[this.member.sex]}}</p>
+                    <p>電郵：{{this.member.email}}</p>
+                    <p>手提電話：{{this.member.phone}}</p>
+                    <p>是否預約進一步檢查?：{{(this.member.option == 1 ? '是' : '否')}}</p>
+                    <p>視光師編號：{{this.member.code}}</p>
+                </div>
+                <div><br/><br/></div>
+                <h3 style="text-align: left; font-size: 24px; margin: 12px auto; padding-bottom: 18px; max-width: calc(400px + 10vw); margin: 0 auto;">問卷答案</h3>
+                <p>&nbsp;</p>
+                <div v-for="(pag, i_pag) in datas" :key="i_pag" style="padding-bottom: 24px;">
+                    <div style="border-radius: 12px; background-color: rgba(250, 252, 255, 0.99); width: 100%; padding: 12px 24px; max-width: calc(400px + 10vw); margin: 0 auto;">
+                        <h4 style="text-align: center; font-size: 22px; margin: 12px auto; color: #0b0907;">{{ pag.title }}</h4>
+                        <p>&nbsp;</p>
+                        <div>
+                            <div style="padding-bottom: 20px;" v-for="(qus, i_qus) in pag.questions" :key="i_qus">
+                                <div style="font-size: 16px; margin: 0px; padding-bottom: 12px; color: #1e1e1e;">{{ qus.title }}</div>
+                                <div>
+                                    <div style="display: inline-block; font-size: 16px; margin: 0px; color: rgb(0, 0, 0)" v-for="(ans, i_ans) in qus.answers" :key="i_ans">
+                                        <p style="display: inline-block; padding-left: 36px;" :style="{ 'color' : (qus.__choose > 1 ? 'rgb(228, 44, 99)' : '') }" v-if="ans.record == qus.__choose">{{ ans.text }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        -->
+    

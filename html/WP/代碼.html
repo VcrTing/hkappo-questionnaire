@@ -1,0 +1,498 @@
+
+<script>
+
+const TEST = false
+
+const conf = {
+    MAIL_GUN: {
+        SENDER: 'support@manfulls.com',
+        DOMAIN: 'mg.manfulls.com',
+    },
+    DEFINE: {
+        // OSDI 係數 = 25
+        OSDI_NUM: 25,
+        // 輕度 指數 界定值
+        LIGHT_LIMIT: 23
+    },
+    PROGRAM: {
+        // 默認 展示 頁面
+        DEF_PAGE: TEST ? 99 : 1,
+        // 不適用 的 文字
+        NOT_APPLY_TXT: 'not_apply',
+        GENDER: { '-1': '未選擇', '0': '女', '1': '男', '3': '保密', '': '未選擇' },
+        MEMBER_TEST: { name: 'ChiWai', age: 18, sex: 1, email: 'chiwai@manfulls.com', phone: '13576639988', option: 1, code: 'number_123' },
+        MEMBER_DEF: { name: '', age: '', sex: 0, email: '', phone: '', option: 1, code: '' },
+        MEMBER_REQUIRE: { name: false, age: false, email: false, code: false } 
+    }
+}
+
+const RECORD_JUDGE = [
+    { text: "正常", section: [ 0, 12 ] },
+    { text: "輕度", section: [ 13, 22 ] },
+    { text: "中度", section: [ 23, 32 ] },
+    { text: "嚴重", section: [ 33, 100 ] },
+    { text: "十分嚴重", section: [ 101, 999 ] },
+]
+
+const { createApp, ref } = Vue
+createApp({
+    data() {
+        const init = ref(false)
+        const page = ref(conf.PROGRAM.DEF_PAGE)
+        const record = ref(0)
+
+        const datas = [
+            // 第一 個 頁面
+            {
+                title: '過去一星期您是否出現過任何下列症狀?',
+                __flag: 1,
+                __bottom_bar: [
+                    { text: "下一頁", click: function() { page.value = 2 }, class: "q-btn-pri" }
+                ],
+                questions: [
+                    { title: '1.眼睛對光線敏感?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4, change: function(ev) { console.log(ev) } },
+                            { text: "多數時間", record: 3, change: function(ev) { console.log(ev) } },
+                            { text: "半數時間", record: 2, change: function(ev) { console.log(ev) } },
+                            { text: "有些時間", record: 1, change: function(ev) { console.log(ev) } },
+                            { text: "完全沒有", record: 0, change: function(ev) { console.log(ev) } }
+                        ] },
+                    { title: '2.眼睛感到有外來物?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4 },
+                            { text: "多數時間", record: 3 },
+                            { text: "半數時間", record: 2 },
+                            { text: "有些時間", record: 1 },
+                            { text: "完全沒有", record: 0 }
+                        ] },
+                    { title: '3.眼睛疼痛或酸痛?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4 },
+                            { text: "多數時間", record: 3 },
+                            { text: "半數時間", record: 2 },
+                            { text: "有些時間", record: 1 },
+                            { text: "完全沒有", record: 0 }
+                        ] },
+                    { title: '4.視野模糊?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4 },
+                            { text: "多數時間", record: 3 },
+                            { text: "半數時間", record: 2 },
+                            { text: "有些時間", record: 1 },
+                            { text: "完全沒有", record: 0 }
+                        ] },
+                    { title: '5.視力不佳?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4 },
+                            { text: "多數時間", record: 3 },
+                            { text: "半數時間", record: 2 },
+                            { text: "有些時間", record: 1 },
+                            { text: "完全沒有", record: 0 }
+                        ] }
+                ]
+            },
+            // 第二 個 頁面
+            {
+                title: '過去一星期您眼睛的問題是否限制了您進行任何下列活動?(如沒有進行該活動，請選擇不適用)',
+                __flag: 2,
+                __bottom_bar: [
+                    { text: "返回", click: function() { page.value = 1 }, class: "q-btn-pri-out" },
+                    { text: "下一頁", click: function() { page.value = 3 }, class: "q-btn-pri" }
+                ],
+                questions: [
+                    { title: '6.閱讀?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4 },
+                            { text: "多數時間", record: 3 },
+                            { text: "半數時間", record: 2 },
+                            { text: "有些時間", record: 1 },
+                            { text: "完全沒有", record: 0 },
+                            { text: "不適用", record: conf.PROGRAM.NOT_APPLY_TXT }
+                        ] },
+                    { title: '7.夜間駕駛?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4 },
+                            { text: "多數時間", record: 3 },
+                            { text: "半數時間", record: 2 },
+                            { text: "有些時間", record: 1 },
+                            { text: "完全沒有", record: 0 },
+                            { text: "不適用", record: conf.PROGRAM.NOT_APPLY_TXT }
+                        ] },
+                    { title: '8.在電腦前工作或使用銀行提款機(ATM)?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4 },
+                            { text: "多數時間", record: 3 },
+                            { text: "半數時間", record: 2 },
+                            { text: "有些時間", record: 1 },
+                            { text: "完全沒有", record: 0 },
+                            { text: "不適用", record: conf.PROGRAM.NOT_APPLY_TXT }
+                        ] },
+                    { title: '9.看電視?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4 },
+                            { text: "多數時間", record: 3 },
+                            { text: "半數時間", record: 2 },
+                            { text: "有些時間", record: 1 },
+                            { text: "完全沒有", record: 0 },
+                            { text: "不適用", record: conf.PROGRAM.NOT_APPLY_TXT }
+                        ] },
+                ]
+            },
+            // 第三 個 頁面
+            {
+                title: '過去一星期您眼睛的問題是否在任何下列情況下感到不適?(如沒有經歷該情況，請選擇不適用)',
+                __flag: 3,
+                __bottom_bar: [
+                    { text: "返回", click: function() { page.value = 2 }, class: "q-btn-pri-out" },
+                    { text: "下一步", click: function() { page.value = 99 }, class: "q-btn-pri" }
+                ],
+                questions: [
+                    { title: '10.在大風的時候?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4 },
+                            { text: "多數時間", record: 3 },
+                            { text: "半數時間", record: 2 },
+                            { text: "有些時間", record: 1 },
+                            { text: "完全沒有", record: 0 },
+                            { text: "不適用", record: conf.PROGRAM.NOT_APPLY_TXT }
+                        ] },
+                    { title: '11.在乾燥的環境?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4 },
+                            { text: "多數時間", record: 3 },
+                            { text: "半數時間", record: 2 },
+                            { text: "有些時間", record: 1 },
+                            { text: "完全沒有", record: 0 },
+                            { text: "不適用", record: conf.PROGRAM.NOT_APPLY_TXT }
+                        ] },
+                    { title: '12.在有冷氣的時候?', __choose: 4,
+                        answers: [
+                            { text: "全部時間", record: 4 },
+                            { text: "多數時間", record: 3 },
+                            { text: "半數時間", record: 2 },
+                            { text: "有些時間", record: 1 },
+                            { text: "完全沒有", record: 0 },
+                            { text: "不適用", record: conf.PROGRAM.NOT_APPLY_TXT }
+                        ] },
+                ]
+            }
+        ]
+
+        // 計算 問題 總數量
+        setTimeout(() => { init.value = true }, 400)
+
+        return {
+            datas, page, record, init, GENDER: conf.PROGRAM.GENDER, LIGHT_LIMIT: conf.DEFINE.LIGHT_LIMIT,
+            member_err: conf.PROGRAM.MEMBER_REQUIRE, sign: 0,
+            member: TEST ? conf.PROGRAM.MEMBER_TEST : conf.PROGRAM.MEMBER_DEF
+        }
+    },
+    computed: {
+        // 問題 啟用的 數量
+        question_avtive_num() { let res = 0; this.computed_data(this.datas, function(question) { if (question.__choose != conf.PROGRAM.NOT_APPLY_TXT) { res += 1 } }); return res; },
+        // 總分數 數量
+        total_record() { let res = 0; this.computed_data(this.datas, function(question) { if (!isNaN(question.__choose)) { res += question.__choose } }); return res; },
+        // OSDI 係數
+        osdi() { return parseInt(this.total_record * conf.DEFINE.OSDI_NUM / this.question_avtive_num) },
+        // OSDI 文字
+        osdiTxt() { const one = this.computed_osdi_judge(this.osdi); return one.text; },
+        // 是否 輕度
+        osdiLight() { return this.osdi < conf.DEFINE.LIGHT_LIMIT }
+    },
+    watch: {
+        'member.email': function (n) { this.vaiiEmail() },
+        'member.option': function (n) { this.vaiiCode() },
+        'member.code': function (n) { this.vaiiCode() },
+        'member.name': function (n) { this.vaiiName() }
+    },
+    methods: {
+        // 驗證 驗光師 編號
+        vaiiCode() { if (this.sign > 0 && this.member.option == 1) { this.member_err['code'] = (this.member['code'].length < 1) } },
+        // 驗證 電郵
+        vaiiEmail() { if (this.sign > 0) { this.member_err['email'] = !this.is_vaiid_emaii(this.member['email']) } },
+        // 驗證 名字
+        vaiiName() { if (this.sign > 0) { this.member_err['name'] = (this.member['name'].length <= 1) } },
+
+        // 切換頁面
+        changePage(i) { 
+            let can = true;
+            if (i == 100) {
+                this.sign += 1;
+                // 驗證
+                this.vaiiName(); this.vaiiEmail(); this.vaiiCode()
+                // 阻斷
+                for (let k in this.member_err) { if (this.member_err[k]) return; }
+                // 提交
+                if (this.member.option == 1) {
+                    // 發送 電郵 給 官方網站
+                    this.send(); this.sign = 0
+                }
+            }
+            if (can) this.page = i; 
+        },
+        // 構建email
+        gen_email_content() {
+            const dom = document.getElementById("id-q-email-content")
+            return dom ? dom.innerHTML : "";
+        },
+        // 計算 
+        computed_osdi_judge(src) {
+            for (let i= 0; i< RECORD_JUDGE.length; i++ ) {
+                const sec = RECORD_JUDGE[i].section;
+                if (sec[0] <= src && src <= sec[1]) { return RECORD_JUDGE[i] }
+            } return { };
+        },
+        // 計算 datas
+        computed_data(many, func) {
+            for (let i= 0; i< many.length; i++ ) {
+                const questions = many[i].questions
+                for (let j= 0; j< questions.length; j++ ) { func(questions[j], j, i) }
+            }
+        },
+        // 發送電郵
+        send() { sendemail("", "用戶 OSDI 眼球表面病變指數測試結果", this.gen_email_content()) },
+        // 正確的郵箱，true = 正確
+        is_vaiid_emaii(src) { return src ? /\S+@\S+\.\S+/.test(src) : false; }
+    },
+}).mount('#app')
+
+const sendemail = function(to, subject, html) {
+    const is_https = window.location.protocol.startsWith('https');
+    const wpm = new WpMaii(TEST ? 'https' : (is_https ? 'https' : 'http'), TEST ? 'fine.up5d.com' : window.location.host)
+    wpm.sendHTML(to, subject, html)
+}
+
+class WpMaii {
+    baseuri;
+    constructor(head, wp_domain) { this.baseuri = head + '://' + wp_domain + '/wp-json'; }
+
+    // 構建 發送 LINK
+    uri(f = 'email') { return this.baseuri + ((f == 'email') ?  '/send/email/html' : '/send/email/validate'); }
+    axiosconf() { return { headers: { 'Content-Type': 'application/json' } } }
+    // 發送 郵件
+    sendHTML(to, subject, html) { 
+        const _this = this
+        html = '<!doctype html><html lang="en" style="background-color: #dbe6f4; overflow: hidden">' +
+            '<head>' +
+                '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">' +
+                '<title>OSDI眼球表面病變指數分數結果</title>' +
+            '</head>' +
+            '<body style="width: 100% !important; min-width: 100%; padding: 0; margin: 0; Margin: 0; font-size: 14px; line-height: 140%; text-align: center;">' +
+                html +
+            '</body></html>';
+
+        axios.post( _this.uri(), { html }, _this.axiosconf()).then(function(res) {
+            if (res.data.status == 200) { console.log(res); }
+        })
+    }
+}
+</script>
+
+<div id="app">
+
+    <div class="q-eye-app d-n py q-ts" :class="{ 'd-b-imp': init }">
+        <div class="py"></div>
+        
+        <!-- 前 三 個 頁面 -->
+        <div v-for="(pag, idx) in datas" :key="idx">
+
+            <div v-if="page == pag.__flag" class="q-eye-page q-panner">
+                <div>
+                    <h2 class="q-wp-title" v-html="pag.title"></h2>
+                </div>
+
+                <div v-for="(qus, jj) in pag.questions" :key="jj">
+
+                    <div class="q-eye-question">
+                        <h4 class="q-wp-title" v-html="qus.title"></h4>
+                        <div>
+                            <div v-for="(ans, kk) in qus.answers" :key="kk">
+
+                                <div class="q-eye-answer">
+                                    <input @change="ans.change" class="q-c-p" v-model="qus.__choose" type="radio" :id="'idx_' + jj + '_' + kk" :value="ans.record"/>
+                                    <label class="q-c-p px-s" :for="'idx_' + jj + '_' + kk" v-html="ans.text"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="q-eye-bottom-bar q-fx-r pt">
+                    <div class="pi" v-for="(bts, hh) in pag.__bottom_bar" :key="hh">
+                        <button @click="bts.click" class="q-c-p q-btn-app mi" :class="bts.class" v-html="bts.text"></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 用戶信息表格 -->
+        <div v-if="page == 99">
+            <div class="q-eye-page q-panner">
+                <h4 class="q-wp-title">填寫個人信息</h4>
+                <div class="q-inp-item">
+                    <div><h5>姓名*</h5></div>
+                    <div><input v-model="member.name" class="q-inp" placeholder="請輸入你的名字"/></div>
+                    <div class="q-inp-err q-expan" :class="{ 'q-expan-iive': member_err.name }">提示：請填寫你的名字。</div>
+                </div>
+                <div class="q-inp-item">
+                    <div><h5>年齡*</h5></div>
+                    <div><input v-model="member.age" class="q-inp" placeholder="請輸入你的年齡"/></div>
+                </div>
+                <div class="q-inp-item">
+                    <div><h5>性別</h5></div>
+                    <div><select v-model="member.sex" class="q-inp">
+                            <option value="0">女</option>
+                            <option value="1">男</option>
+                            <option value="3">保密</option>
+                        </select></div>
+                </div>
+                <div class="q-inp-item">
+                    <div><h5>電郵*</h5></div>
+                    <div><input v-model="member.email" class="q-inp" placeholder="請輸入你的電郵"/></div>
+                    <div class="q-inp-err q-expan" :class="{ 'q-expan-iive': member_err.email }">提示：請填寫正確的電郵地址。</div>
+                </div>
+                <div class="q-inp-item">
+                    <div><h5>手提電話號碼(選填)</h5></div>
+                    <div><input type="number" v-model="member.phone" class="q-inp" placeholder="請輸入你的手提電話號碼"/></div>
+                </div>
+
+                <div class="q-inp-item">
+                    <div><h5>你是否願意將個人資料轉介給我們香港執業眼科視光師協會成員以預約進一步檢查? (當閣下填寫「是」時，我們將收集閣下的個人資料轉交協會成員。)</h5></div>
+                    <div>
+                        <select v-model="member.option" class="q-inp">
+                            <option value="1">是</option>
+                            <option value="2">否</option>
+                        </select>
+                    </div>
+                    <div class="q-expan" :class="{ 'q-expan-iive': member.option == 1 }">
+                        <div class="py ih"><div>如你的視光師是香港執業眼科視光師的會員，請填寫視光師會員編號</div></div>
+                        <div><input v-model="member.code" class="q-inp" placeholder="請輸入視光師的會員編號"/></div>
+                        <div class="q-inp-err q-expan" :class="{ 'q-expan-iive': member_err.code }">提示：請填寫你的視光師會員編號，以便預約進一步的檢查。</div>
+                    </div>
+                    <div class="py ih">閣下向我們提供的個人資料將會被香港執業眼科視光師協會於統計乾眼症人士資料和其他直接相關的用途。倘若閣下為13歲以下，在提供任何個人資料前，必須先徵求家長或監護人同意。 當閣下按照我們收集資料時所說明之目的而向我們提交資料，即表示閣下已經閱讀和理解本私隱政策，並同意我們收集閣下的個人資料及將其用於與本政策中所述的所有目的以及相關的用途。然而，我們不會使用閣下的個人資料作直銷，包括閣下的姓名和聯絡方法，除非我們已經收到閣下同意將個人資料轉介給我們協會成員以預約進一步檢查。</div>
+                </div>
+
+                <div class="py-s"></div>
+                <div class="q-eye-bottom-bar q-fx-r">
+                    <div>
+                        <button @click="changePage(datas.length)" class="q-c-p q-btn-app q-btn-pri-out" >返回</button>
+                        <span class="px"></span>
+                        <button @click="changePage(100)" class="q-c-p q-btn-app q-btn-pri" >提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 結算 頁面 -->
+        <div v-if="page == 100">
+            <div class="q-ta-c">
+                <div id="q-mail-content">
+                    <div class="pb" id="q-mail-content-osdi">
+                        <h3 @click="" class="py">
+                            <div class="d-ib" v-if="member.name && member.name.length >= 2"><span v-html="member.name"></span>，</div>
+                            您的OSDI眼球表面病變指數分數是</h3>
+                        <div class="py-s"></div>
+                        <div class="q-eye-page q-panner">
+                            <div class="pb"><h1 v-html="osdi"></h1></div>
+                            <h3 class="">情況屬於<div class="d-ib" :class="{ 'q-c-suc': osdiLight, 'q-c-err': !osdiLight }">【<span v-html="osdiTxt"></span>】</div></h3>
+                        </div>
+                    </div>
+                    <div class="py">
+                        <div class="pb-s pt-s">角膜病變是不可逆的喔!</div>
+                        <div class="pb-s">建議您從日常保健開始，</div>
+                        <div class="pb-s">減少使用3C產品的時間，</div>
+                        <div class="pb-s">並常常眨眼或是定期熱敷雙眼，</div>
+                        <div class="pb-s">也可透過隨時點用人工淚液來增加眼睛的潤滑度與保濕度喔!</div>
+                    </div>
+                </div>
+                <div class="py"></div>
+                <div class="py q-eye-page">
+                    <button @click="changePage(1)" class="w-50 q-c-p py q-c-p q-btn-app q-btn-pri">返回首頁</button>
+                </div>
+            </div>
+            <div class=""><br/><br/><br/><br/><br/><br/><br/><br/></div>
+        </div>
+        
+        <!-- 隱私條款 -->
+        <div v-if="page != 100" class="py">
+            <div class="q-eye-page pi">私隱條款：您提供的個人資料完全基於自願性質。我們將會收集並妥善保管這些資料，並保證這些資料僅會在「香港執業眼科視光師協會」內使用，不會用於其他任何用途。如果您有任何私人備註或需要更新的資訊，請隨時告知我們。我們將會妥善處理您的資訊，並尊重您的隱私。</div>
+        </div>
+    </div>
+    
+    <!-- 答案 HTML -->
+    <div class="q-result-mod">
+        <div id="id-q-email-content">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" height="100%" class="body">
+                <!-- 头 -->
+                <tr style="padding: 0; vertical-align: top; text-align: left;">
+                    <td align="center" valign="top" style="padding-top: 36px;">
+                        <table border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td style="padding-bottom: 6px;">
+                                    <h2 style="text-align: center; font-size: 28px; margin: 0px auto; line-height: 1.4em;">{{(this.member.name.length > 1) ? this.member.name : '用戶'}}的OSDI眼球表面病變指數分數是</h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-top: 16px;">
+                                    <div style="text-align: center; border-radius: 12px; background-color: rgb(252, 253, 254); width: 100%; padding: 30px 24px; max-width: calc(400px + 10vw); margin: 0 auto;">
+                                        <div class="pb"><h1 style="font-size: 48px; margin: 0 auto; line-height: 1.2em;">{{this.osdi}}</h1></div>
+                                        <h3 style="font-size: 26px; margin: 0 auto; line-height: 1.4em; padding-top: 18px;">情況屬於<span :style="{ 'color': (this.osdi < this.LIGHT_LIMIT ? 'rgb(25, 161, 63)' : 'rgb(241, 44, 103)') }">【{{this.osdiTxt}}】</span></h3>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                
+                <!-- 用户 信息 -->
+                <tr style="padding: 0; vertical-align: top; text-align: left;">
+                    <td align="center" valign="top" style="padding-top: 48px; padding-bottom: 12px;">
+
+                        <table border="0" cellpadding="0" cellspacing="0" style="border-radius: 12px; width: 100%; padding-left: 12px; max-width: calc(400px + 10vw); margin: 0 auto;">
+                            <tr><td><h3 style="font-size: 24px; line-height: 1.4me; padding-bottom: 9px;">用戶信息與問卷答案</h3></td></tr>
+                            <tr><td style="padding-bottom: 12px;"><div>姓名：{{this.member.name}}</div></td></tr>
+                            <tr><td style="padding-bottom: 12px;"><div>年齡：{{this.member.age}}</div></td></tr>
+                            <tr><td style="padding-bottom: 12px;"><div>性別：{{this.GENDER[this.member.sex]}}</div></td></tr>
+                            <tr><td style="padding-bottom: 12px;"><div>電郵：<span>{{this.member.email}}</span></div></td></tr>
+                            <tr><td style="padding-bottom: 12px;"><div>手提電話：{{this.member.phone}}</div></td></tr>
+                            <tr><td style="padding-bottom: 12px;"><div>是否預約進一步檢查?：{{(this.member.option == 1 ? '是' : '否')}}</div></td></tr>
+                            <tr><td style="padding-bottom: 12px;"><div>視光師編號：{{this.member.code}}</div></td></tr>
+                        </table>
+                        <br/>
+                    </td>
+                </tr>
+
+                <!-- 问卷 答案 -->
+                <tr style="padding: 0; vertical-align: top; text-align: left;">
+                    <td align="center" valign="top">
+                        
+                        <table border="0" cellpadding="0" cellspacing="0">
+                            <tr v-for="(pag, i_pag) in datas" :key="i_pag">
+                                <td style="padding-bottom: 12px;">
+                                    <div style="border-radius: 12px; background-color: rgba(250, 252, 255, 0.99); width: 100%; padding: 12px 24px; max-width: calc(400px + 10vw); margin: 0 auto;">
+                                        <h3 style="text-align: center; font-size: 22px; margin: 12px auto; color: #0b0907; line-height: 1.4em;">{{ pag.title }}</h3>
+                                        <br/>
+                                        <div>
+                                            <table border="0" cellpadding="0" cellspacing="0" style="padding-bottom: 20px;" v-for="(qus, i_qus) in pag.questions" :key="i_qus">
+                                                <tr style="font-size: 15px; margin: 0px; padding-bottom: 12px; color: #1e1e1e;"><td>{{ qus.title }}</td></tr>
+                                                <tr>
+                                                    <td style="display: inline-block; font-size: 16px; margin: 0px; color: rgb(0, 0, 0)" v-for="(ans, i_ans) in qus.answers" :key="i_ans">
+                                                        <div style="display: inline-block; padding-left: 36px; padding-top: 16px; margin: 0px;" :style="{ 'color' : (qus.__choose > 1 ? 'rgb(241, 44, 103)' : '') }" v-if="ans.record == qus.__choose">{{ ans.text }}</div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr><td><p>&nbsp;</p></td></tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</div>

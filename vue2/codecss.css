@@ -1,0 +1,75 @@
+html {
+    background: #dbe6f4;
+}
+
+.q-eye-app * {
+    margin: 0;
+}
+
+.q-eye-app h1 { font-size: 48px; line-height: 1.12em; }
+.q-eye-app h2 { font-size: 32px; line-height: 1.2em; padding-bottom: 12px; }
+.q-eye-app h3 { font-size: 26px; line-height: 1.6em; }
+.q-eye-app h4 { font-size: 23px; line-height: 1.8em; }
+.q-eye-app h5 { font-size: 19px; line-height: 1.5em; }
+
+.q-btn-pri, .q-btn-pri-out { border: 2px solid transparent; }
+.q-btn-pri {
+    background-color: #214577;
+    color: #FFF;
+}
+.q-btn-pri-out {
+    background-color: #FFF;
+    border-color: #214577;
+    color: #214577;
+}
+.q-btn-app {
+    min-width: calc(90px + 3vw); border-radius: 8em; padding: 9px 24px; font-weight: bold;
+}
+
+.q-eye-page { padding: 30px 24px; max-width: calc(500px + 12vw); margin: 0 auto; }
+
+.q-eye-question {
+    padding: 12px 6px;
+}
+
+.q-eye-answer { padding: 6px 0px; }
+.q-eye-answer label { padding-left: 3px; }
+
+.q-eye-bottom-bar {
+    padding-top: 12px;
+}
+
+/* 表格 */
+.q-inp-item { padding: 6px 0px; } 
+.q-inp-item h5 { padding: 9px 0px; }
+.q-inp { padding: 12px 18px; border-color: transparent; background-color: #f2f2f2; border-radius: 8px; width: 100%; }
+
+/* 狀態 */
+.q-c-suc { color: rgb(25, 161, 63); }
+.q-c-err { color: rgb(241, 44, 103); }
+
+
+/* 工具 */
+.q-fx-r {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.w-50 { width: 50%; }
+.q-c-p { cursor: pointer; }
+.ih-n { line-height: 1.5em; }
+.ih { line-height: 1.8em; }
+.q-ta-c { text-align: center; }
+.q-bg-fff { background-color: #FFF; }
+.pb-s { padding-bottom: 6px; }
+.pb { padding-bottom: 12px; }
+.px-s { padding-left: 6px; padding-right: 6px; }
+.py-s { padding-top: 6px; padding-bottom: 6px; }
+.px { padding-left: 12px; padding-right: 12px; }
+.py { padding-top: 12px; padding-bottom: 12px; }
+.mi { margin-left: 12px; }
+.mr { margin-right: 12px; }
+.d-ib { display: inline-block; } 
+.d-n { display: none; }
+.d-b-imp { display: block !important; }
+.q-panner { border-radius: 12px; background-color: #FFF; width: 100%; }
